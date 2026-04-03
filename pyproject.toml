@@ -9,11 +9,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
-    "accelerate>=1.13.0",
     "pypdf>=6.9.2",
-    "pytesseract>=0.3.13",
-    "torch>=2.11.0",
-    "transformers>=5.4.0",
 ]
 
 [project.scripts]
