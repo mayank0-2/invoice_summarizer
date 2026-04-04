@@ -1,8 +1,14 @@
 name: Build
-build:
-  runs-on: ubuntu-latest
+on:
+  push:
 
-  steps:
-  - uses: actions/checkout@v4
-  - name: Build Docker Image
-    run: docker build .
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+    - 
+      name: Build Docker Image
+      uses: docker/build-push-action@v7.0.0 
+      with:
+        context: .
+        push: false
