@@ -19,7 +19,7 @@ def setup_connection():
     with imaplib.IMAP4_SSL("imap.gmail.com", port=993) as imap:
         print("Logging in to email server...")
         a, b = imap.login(EMAIL, APP_PASSWORD)
-
+        
         # selecting inbox
         status, messages = imap.select("Invoices", readonly=True)
         status, mail = imap.search(None, "ALL")
