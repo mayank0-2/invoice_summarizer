@@ -1,8 +1,14 @@
 import imaplib
 import os
 import email
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.mime.base import MIMEBase
+from email import encoders
+import time
 from PyPDF2 import PdfMerger
 import pathlib
+import base64
 
 # Securely load credentials from environment variables
 EMAIL = os.environ.get("GMAIL_ADDRESS", default="***")
@@ -46,7 +52,11 @@ def setup_connection():
                         f.write("-" * 50 + "\n")
                         f.write(body)
                 elif part.get_content_type() == "application/pdf":
-                    filename = pathlib.Path(__file__).resolve().parent / "invoice" / part.get_filename()
+                    filename = (
+                        pathlib.Path(__file__).resolve().parent
+                        / "invoice"
+                        / part.get_filename()
+                    )
                     filename.parent.mkdir(parents=True, exist_ok=True)
                     if filename:
                         with open(filename, "wb") as f:
@@ -62,8 +72,43 @@ def setup_connection():
     for filename in os.listdir("src/email/invoice"):
         pdf_path = os.path.join("src/email/invoice/", filename)
         merger.append(pdf_path)
-    with open("final.pdf", "wb") as f :
+    with open("final.pdf", "wb") as f:
         merger.write(f)
+
+    with imaplib.IMAP4_SSL("imap.gmail.com", port=993) as imap:
+        print("Logging in to email server...")
+        a, b = imap.login(EMAIL, APP_PASSWORD)
+        msg = MIMEMultipart()
+        msg["From"] = ""
+        msg["To"] = ""
+        msg["Subject"] = "Draft with PDF Attachment"
+
+        # Add body
+        body = "Please find the attached PDF."
+        msg.attach(MIMEText(body, "plain"))
+
+        # Attach PDF
+        filename = "test.pdf"
+        with open(filename, "rb") as attachment:
+            part = MIMEBase("application", "octet-stream")
+            part.set_payload(attachment.read())
+        # Encode file in base64
+        encoders.encode_base64(part)
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename= test.pdf",
+        )
+        msg.attach(part)
+
+        # Convert message to string
+        text = msg.as_string()
+
+        imap.select("[Gmail]/Drafts")
+
+        # Append draft
+        imap.append("[Gmail]/Drafts", "", imaplib.Time2Internaldate(time.time()), text.encode("utf-8"))
+
+        imap.logout()
 
 
 if __name__ == "__main__":
