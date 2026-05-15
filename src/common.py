@@ -1,8 +1,50 @@
-from dataclasses import dataclass
+from PyPDF2 import PdfMerger
+import email
+import imaplib
+import os
+import pathlib
+from typing import Any, Final
 
-@dataclass
-class Args:
-    email: str
-    password: str
+PATH: Final = "src/email/invoice/"
 
 
+class InvoiceSummary:
+    __conn: imaplib.IMAP4_SSL
+
+    def __init__(self, client: Any):
+        self.__conn = client
+
+    @classmethod
+    def __build_summarizer(cls, conn: Any) -> InvoiceSummary:
+        return cls(conn)
+
+    def __run(self):
+        client = self.__conn.client
+        client.select("Invoices", readonly=True)
+        _, mail = client.search(None, "ALL")
+        for mail_id in mail[0].split():
+            _, msg_data = client.fetch(mail_id, "(RFC822)")
+            email_message = email.message_from_bytes(msg_data[0][1])
+            self.__extractAttachment(email_message)
+        self.__merge_pdfs()
+
+    def __extractAttachment(self, email_message: Any):
+        for part in email_message.walk():
+            if part.get_content_type() == "text/plain":
+                # TODO: read the date and automate one month extraction.
+                pass
+            elif part.get_content_type() == "application/pdf":
+                filename = pathlib.Path(PATH).resolve() / part.get_filename()
+                filename.parent.mkdir(parents=True, exist_ok=True)
+                if filename:
+                    with open(filename, "wb") as f:
+                        f.write(part.get_payload(decode=True))
+                    print(f"Saved attachment: {filename}")
+
+    def __merge_pdfs(self):
+        merger = PdfMerger()
+        for filename in os.listdir(PATH):
+            pdf_path = os.path.join(PATH, filename)
+            merger.append(pdf_path)
+        with open("final.pdf", "wb") as f:
+            merger.write(f)
