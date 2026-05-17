@@ -1,0 +1,16 @@
+name: CRON EXECUTOR
+on: 
+  schedule: 
+    - cron: "0 0 25 * *"
+jobs: 
+  reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0  
+          ref: "main"
+      - name: execute
+        run: | 
+          make run
