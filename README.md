@@ -26,6 +26,7 @@ A Python automation tool that streamlines your accounting workflow by automatica
 2. **Install Dependencies:**
    Use `uv` to set up your virtual environment and install dependencies:
    ```bash
+   make build
    ```
 
 3. **Environment Variables:**
@@ -40,7 +41,7 @@ A Python automation tool that streamlines your accounting workflow by automatica
 Run the main script using `uv` to start the extraction and merging process:
 
 ```bash
-make build
+make run
 ```
 
 The individual invoice files will be temporarily saved in `src/email/invoice/`, and the successfully merged output will be saved as `final.pdf` in the root directory.
