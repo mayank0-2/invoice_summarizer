@@ -1,4 +1,7 @@
 .phony: build
 
 build:
-	uv sync --locked && uv run invoice-summarizer
+	uv sync --locked 
+run: build
+	uv run invoice-summarizer
+
