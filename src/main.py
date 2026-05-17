@@ -7,10 +7,10 @@ from src.email.gmail import GmailClient
 
 def main():
     logger = loguru.logger
-    client_engine = GmailClient.__build_client(config, logger)
-    summary = InvoiceSummary.__build_summarizer(client_engine)
-    summary.__run()
-    GmailClient.__logout(client_engine)
+    client_engine = GmailClient.build_client(config, logger)
+    summary = InvoiceSummary.build_summarizer(client_engine)
+    summary.run()
+    client_engine.logout()
 
 
 if __name__ == "__main__":

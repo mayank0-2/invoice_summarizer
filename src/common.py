@@ -11,15 +11,15 @@ PATH: Final = "src/email/invoice/"
 class InvoiceSummary:
     __conn: imaplib.IMAP4_SSL
 
-    def __init__(self, client: Any):
-        self.__conn = client
+    def __init__(self, conn: Any):
+        self.__conn = conn.client
 
     @classmethod
-    def __build_summarizer(cls, conn: Any) -> InvoiceSummary:
+    def build_summarizer(cls, conn: Any) -> InvoiceSummary:
         return cls(conn)
 
-    def __run(self):
-        client = self.__conn.client
+    def run(self):
+        client = self.__conn
         client.select("Invoices", readonly=True)
         _, mail = client.search(None, "ALL")
         for mail_id in mail[0].split():

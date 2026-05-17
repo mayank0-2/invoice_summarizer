@@ -7,22 +7,22 @@ from email.mime.multipart import MIMEMultipart
 from multiprocessing import AuthenticationError
 from time import time
 
-from loguru import Logger
+from loguru import logger
 
 from src.email.config import Config
 
 
 class GmailClient:
-    __client: imaplib.IMAP4_SSL
+    client: imaplib.IMAP4_SSL
 
     def __init__(self, conn: imaplib.IMAP4_SSL):
-        self.__client = conn
+        self.client = conn
 
-    def __logout(self):
-        self.__client.logout()
+    def logout(self):
+        self.client.logout()
 
     @classmethod
-    def __build_client(cls, config: Config, logger: Logger) -> GmailClient:
+    def build_client(cls, config: Config, logger: Logger) -> GmailClient:
         logger.info("Setting up connection to email server...")
         conn = imaplib.IMAP4_SSL("imap.gmail.com", port=993)
         try:
@@ -35,7 +35,7 @@ class GmailClient:
         return cls(conn)
 
     def __drft_mail(self):
-        client = self.__client
+        client = self.client
         msg = MIMEMultipart()
         month_year = datetime.now().strftime("%b %Y")
         msg["From"] = ""
