@@ -2,7 +2,7 @@ FROM ghcr.io/astral-sh/uv:python3.14-trixie-slim
 WORKDIR /workspace
 
 #Enable bytecode compilation
-ENV uv_COMPILE_BYTECODE=1
+ENV UV_COMPILE_BYTECODE=1
 
 #copy from the cache instead of linkin since it's a mounted volume
 ENV UV_LINK_MODE=copy
@@ -23,7 +23,7 @@ ENV REQUESTS_CA_BUNDLE=/etc/ssl/certs/ca-certificates.crt
 RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     --mount=type=bind,source=uv.lock,target=uv.lock \
-     uv sync --locked --no-install-project
+    uv sync --locked --no-install-project
  
 COPY . /workspace
 RUN --mount=type=cache,target=/root/.cache/uv \
