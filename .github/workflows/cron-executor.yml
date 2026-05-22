@@ -11,6 +11,14 @@ jobs:
         with:
           fetch-depth: 0  
           ref: "main"
-      - name: execute
-        run: | 
-          make run
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+      - name: Build Docker Image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          push: false
+          load: true
+          tags: myapp:latest
+      - name: Run Docker container
+        run: docker run -e EMAIL=$EMAIL_ADDRESS APP_PASSWORD:$APP_PASSWORD myapp:latest uv run invoice-summarizer 

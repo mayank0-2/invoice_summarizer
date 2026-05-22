@@ -10,7 +10,9 @@ def main():
     client_engine = GmailClient.build_client(config, logger)
     summary = InvoiceSummary.build_summarizer(client_engine)
     summary.run()
+    client_engine.draft_mail()
     client_engine.logout()
+
 
 
 if __name__ == "__main__":
