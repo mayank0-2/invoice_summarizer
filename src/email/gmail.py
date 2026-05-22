@@ -7,7 +7,6 @@ from email.mime.multipart import MIMEMultipart
 from multiprocessing import AuthenticationError
 from time import time
 
-from loguru import logger
 
 from src.email.config import Config
 
@@ -34,7 +33,7 @@ class GmailClient:
             )
         return cls(conn)
 
-    def __drft_mail(self):
+    def draft_mail(self):
         client = self.client
         msg = MIMEMultipart()
         month_year = datetime.now().strftime("%b %Y")
