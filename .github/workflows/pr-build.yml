@@ -1,4 +1,4 @@
-name: PR BUILD
+name: pr-build
 on: [pull_request]
 jobs:
   handle-pr:
