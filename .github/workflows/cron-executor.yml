@@ -20,7 +20,7 @@ jobs:
           context: .
           push: false
           load: true
-          tags: myapp:latest
+          tags: invoice-summarizer:latest
       - name: Run Docker container
         env: 
           EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
