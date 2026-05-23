@@ -22,4 +22,7 @@ jobs:
           load: true
           tags: myapp:latest
       - name: Run Docker container
-        run: docker run -e EMAIL=$EMAIL_ADDRESS -e APP_PASSWORD:$APP_PASSWORD myapp:latest uv run invoice-summarizer 
+        env: 
+          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
+        run: make docker-run
