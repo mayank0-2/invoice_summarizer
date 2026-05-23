@@ -1,3 +1,4 @@
+from datetime import datetime
 from PyPDF2 import PdfMerger
 import email
 import imaplib
@@ -15,7 +16,7 @@ class InvoiceSummary:
         self.__conn = conn.client
 
     @classmethod
-    def build_summarizer(cls, conn: Any) -> InvoiceSummary:
+    def build_summarizer(cls, conn: Any):
         return cls(conn)
 
     def run(self):
@@ -25,7 +26,8 @@ class InvoiceSummary:
         for mail_id in mail[0].split():
             _, msg_data = client.fetch(mail_id, "(RFC822)")
             email_message = email.message_from_bytes(msg_data[0][1])
-            self.__extractAttachment(email_message)
+            if self.__check_download_eligibility(email_message):
+                self.__extractAttachment(email_message)
         self.__merge_pdfs()
 
     def __extractAttachment(self, email_message: Any):
@@ -48,3 +50,13 @@ class InvoiceSummary:
             merger.append(pdf_path)
         with open("final.pdf", "wb") as f:
             merger.write(f)
+
+    def __check_download_eligibility(self, email_message):
+        date = email_message['date']
+        date_obj = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z").date()
+        date_today = datetime.today().date()
+        delta = date_today - date_obj
+        if delta.days > 30:
+            return False
+        
+        return True
