@@ -1,12 +1,12 @@
+from loguru import logger
 import email.encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 import imaplib
-from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from multiprocessing import AuthenticationError
 from time import time
-
+from src.email.metadata import MetaData
 
 from src.email.config import Config
 
@@ -21,7 +21,7 @@ class GmailClient:
         self.client.logout()
 
     @classmethod
-    def build_client(cls, config: Config, logger: Logger) -> GmailClient:
+    def build_client(cls, config: Config, logger: logger):
         logger.info("Setting up connection to email server...")
         conn = imaplib.IMAP4_SSL("imap.gmail.com", port=993)
         try:
@@ -33,15 +33,13 @@ class GmailClient:
             )
         return cls(conn)
 
-    def draft_mail(self):
+
+    def draft_mail(self, metadata: MetaData):
         client = self.client
         msg = MIMEMultipart()
-        month_year = datetime.now().strftime("%b %Y")
-        msg["From"] = ""
-        msg["To"] = ""
-        msg["Subject"] = f"HungerBox Invoice Summary for {month_year}."
-
-        body = "Hi, \n\nPlease find the attached PDF containing the invoice summary for the month.\n\nBest regards,\nMayank Kumar"
+        msg["To"] = metadata.to
+        msg["Subject"] = metadata.subject 
+        body = metadata.body 
 
         msg.attach(MIMEText(body, "plain"))
 

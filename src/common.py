@@ -33,7 +33,6 @@ class InvoiceSummary:
     def __extractAttachment(self, email_message: Any):
         for part in email_message.walk():
             if part.get_content_type() == "text/plain":
-                # TODO: read the date and automate one month extraction.
                 pass
             elif part.get_content_type() == "application/pdf":
                 filename = pathlib.Path(PATH).resolve() / part.get_filename()
