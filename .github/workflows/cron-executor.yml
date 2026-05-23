@@ -22,7 +22,7 @@ jobs:
           load: true
           tags: invoice-summarizer:latest
       - name: Run Docker container
-        env: 
-          EMAIL_ADDRESS: ${{ secrets.EMAIL_ADDRESS }}
-          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
         run: make docker-run
+        env: 
+          EMAIL: ${{ secrets.EMAIL_ADDRESS }}
+          APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
