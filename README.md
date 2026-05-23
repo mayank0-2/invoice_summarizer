@@ -45,7 +45,3 @@ make run
 ```
 
 The individual invoice files will be temporarily saved in `src/email/invoice/`, and the successfully merged output will be saved as `final.pdf` in the root directory.
-
-## Future Enhancements
-- [ ] Read the email date and automate extraction exclusively for the previous month.
-- [ ] Automatic cleanup of individual downloaded PDF files after the merge completes.
