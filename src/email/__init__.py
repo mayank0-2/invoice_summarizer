@@ -1,0 +1,1 @@
+# Make email a package
