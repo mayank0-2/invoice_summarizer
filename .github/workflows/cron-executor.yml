@@ -26,6 +26,3 @@ jobs:
         env: 
           EMAIL: ${{ secrets.EMAIL_ADDRESS }}
           APP_PASSWORD: ${{ secrets.APP_PASSWORD }}
-      - name: Commit to repo
-        run: ./scripts/commit.sh
-          
