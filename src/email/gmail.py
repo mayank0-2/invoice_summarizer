@@ -3,9 +3,9 @@ import email.encoders
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 import imaplib
+import smtplib
 from email.mime.multipart import MIMEMultipart
 from multiprocessing import AuthenticationError
-from time import time
 from src.email.metadata import MetaData
 
 from src.email.config import Config
@@ -14,8 +14,9 @@ from src.email.config import Config
 class GmailClient:
     client: imaplib.IMAP4_SSL
 
-    def __init__(self, conn: imaplib.IMAP4_SSL):
+    def __init__(self, conn: imaplib.IMAP4_SSL, config: Config):
         self.client = conn
+        self._config = config
 
     def logout(self):
         self.client.logout()
@@ -31,17 +32,16 @@ class GmailClient:
             raise AuthenticationError(
                 "Authentication failed. Check email and app password."
             )
-        return cls(conn)
+        return cls(conn, config)
 
-
-    def draft_mail(self, metadata: MetaData):
-        client = self.client
+    def _build_message(self, metadata: MetaData) -> MIMEMultipart:
+        if not metadata.to:
+            raise ValueError("RECIPIENTS is required (comma-separated emails).")
         msg = MIMEMultipart()
-        msg["To"] = metadata.to
-        msg["Subject"] = metadata.subject 
-        body = metadata.body 
-
-        msg.attach(MIMEText(body, "plain"))
+        msg["From"] = self._config.email
+        msg["To"] = ", ".join(metadata.to)
+        msg["Subject"] = metadata.subject
+        msg.attach(MIMEText(metadata.body, "plain"))
 
         filename = "final.pdf"
         with open(filename, "rb") as attachment:
@@ -53,11 +53,21 @@ class GmailClient:
             f"attachment; filename= {filename}",
         )
         msg.attach(part)
-        text = msg.as_string()
-        client.select("[Gmail]/Drafts")
-        client.append(
-            "[Gmail]/Drafts",
-            "",
-            imaplib.Time2Internaldate(time()),
-            text.encode("utf-8"),
-        )
+        return msg
+
+    def send_mail(self, metadata: MetaData):
+        msg = self._build_message(metadata)
+        envelope = metadata.to + metadata.bcc
+        try:
+            with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
+                smtp.starttls()
+                smtp.login(self._config.email, self._config.app_password)
+                smtp.send_message(
+                    msg, from_addr=self._config.email, to_addrs=envelope
+                )
+        except smtplib.SMTPAuthenticationError as e:
+            logger.error("SMTP authentication failed. Check email and app password.", e)
+            raise AuthenticationError(
+                "Authentication failed. Check email and app password."
+            )
+        logger.info("Sent invoice summary to {}", ", ".join(metadata.to))

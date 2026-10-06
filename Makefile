@@ -7,4 +7,4 @@ run: build
 docker-build:
 	docker build -t invoice-summarizer:latest .
 docker-run:
-	docker run -e ENV=prod -e EMAIL="${EMAIL}" -e APP_PASSWORD="${APP_PASSWORD}" invoice-summarizer:latest uv run invoice-summarizer
+	docker run -e ENV=prod -e EMAIL="${EMAIL}" -e APP_PASSWORD="${APP_PASSWORD}" -e RECIPIENTS="${RECIPIENTS}" -e BCC="${BCC}" invoice-summarizer:latest uv run invoice-summarizer

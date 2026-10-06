@@ -10,8 +10,8 @@ def main():
     client_engine = GmailClient.build_client(config, logger)
     summary = InvoiceSummary.build_summarizer(client_engine)
     summary.run()
-    metadata = MetaData.build()
-    client_engine.draft_mail(metadata)
+    metadata = MetaData.build(config.recipients, config.bcc)
+    client_engine.send_mail(metadata)
     client_engine.logout()
 
 
