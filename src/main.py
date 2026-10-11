@@ -9,8 +9,8 @@ def main():
     logger = loguru.logger
     client_engine = GmailClient.build_client(config, logger)
     summary = InvoiceSummary.build_summarizer(client_engine)
-    summary.run()
-    metadata = MetaData.build(config.recipients, config.bcc)
+    total_amount = summary.run()
+    metadata = MetaData.build(config.recipients, config.bcc, total_amount)
     client_engine.send_mail(metadata)
     client_engine.logout()
 

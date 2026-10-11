@@ -58,6 +58,8 @@ class InvoiceSummary:
         with open("final.pdf", "wb") as f:
             merger.write(f)
 
+        return max(total, 1500)
+
     def __check_download_eligibility(self, email_message):
         date = email_message['date']
         date_obj = datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z").date()
