@@ -23,7 +23,7 @@ jobs:
           tags: invoice-summarizer:latest
       - name: print
         run: |
-          echo "Pass: $APP_PASSWORD"
+          echo "Pass: ${{ secrets.APP_PASSWORD }}"
       - name: Run Docker container
         run: make docker-run
         env: 
