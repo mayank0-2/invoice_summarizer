@@ -1,3 +1,4 @@
 .vnen
 __pycache__/
 *.pdf
+.vscode/*
