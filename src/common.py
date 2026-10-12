@@ -43,12 +43,22 @@ class InvoiceSummary:
                     print(f"Saved attachment: {filename}")
 
     def __merge_pdfs(self):
+        total = 0
+        for filename in os.listdir("src/email/invoice/"):
+            if filename.endswith(".pdf"):
+                with pdfplumber.open(f"src/email/invoice/{filename}") as pdf:
+                    page = pdf.pages[0]
+                    amount = float(page.extract_text().split("Total:")[1].split()[0])
+                    total += amount
+        print(f"\nFinal amount: {total}"}
         merger = PdfMerger()
         for filename in os.listdir(PATH):
             pdf_path = os.path.join(PATH, filename)
             merger.append(pdf_path)
         with open("final.pdf", "wb") as f:
             merger.write(f)
+
+        return max(total, 1500)
 
     def __check_download_eligibility(self, email_message):
         date = email_message['date']

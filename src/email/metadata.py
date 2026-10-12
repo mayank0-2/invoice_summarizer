@@ -1,6 +1,6 @@
 from datetime import datetime
 from dataclasses import dataclass, field
-from typing import List, Optional
+from typing import List, Optional, Any
 
 
 @dataclass
@@ -10,14 +10,14 @@ class MetaData:
     subject: str = "HungerBox Invoice Summary for {}."
     body: str = (
         "Hi, \n\nPlease find the attached PDF containing the invoice summary "
-        "of 2000 rupees for this month.\n\nBest regards,\nMayank Kumar"
+        "of {} rupees for this month.\n\nBest regards,\nMayank Kumar"
     )
 
     @classmethod
-    def build(cls, to: List[str], bcc: Optional[List[str]] = None):
+    def build(cls, to: List[str], bcc: Optional[List[str]] = None, total: Any):
         formated_date = datetime.now().strftime("%b %Y")
         return cls(
             to=to,
             bcc=bcc or [],
-            subject=cls.subject.format(formated_date),
+            subject=cls.subject.format(formated_date, total),
         )
