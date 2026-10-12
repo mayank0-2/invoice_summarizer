@@ -14,7 +14,7 @@ class MetaData:
     )
 
     @classmethod
-    def build(cls, to: List[str], bcc: Optional[List[str]] = None, total: Any):
+    def build(cls, to: List[str], bcc: Optional[List[str]] = None, total: Any = 1500):
         formated_date = datetime.now().strftime("%b %Y")
         return cls(
             to=to,
