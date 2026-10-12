@@ -26,8 +26,7 @@ class GmailClient:
         logger.info("Setting up connection to email server...")
         conn = imaplib.IMAP4_SSL("imap.gmail.com", port=993)
         try:
-            print("App_password:")
-            print(config.app_password)
+
             conn.login(config.email, config.app_password)
         except imaplib.IMAP4_SSL.error as e:
             logger.error("Authentication failed. Check email and app password.", e)
