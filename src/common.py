@@ -50,7 +50,7 @@ class InvoiceSummary:
                     page = pdf.pages[0]
                     amount = float(page.extract_text().split("Total:")[1].split()[0])
                     total += amount
-        print(f"\nFinal amount: {total}"}
+        print(f"\nFinal amount: {total}")
         merger = PdfMerger()
         for filename in os.listdir(PATH):
             pdf_path = os.path.join(PATH, filename)
