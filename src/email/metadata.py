@@ -19,5 +19,6 @@ class MetaData:
         return cls(
             to=to,
             bcc=bcc or [],
-            subject=cls.subject.format(formated_date, total),
+            subject=cls.subject.format(formated_date),
+            body = cls.body.format(total)
         )

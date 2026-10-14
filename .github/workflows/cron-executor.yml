@@ -21,9 +21,6 @@ jobs:
           push: false
           load: true
           tags: invoice-summarizer:latest
-      - name: print
-        run: |
-          echo "Pass: ${{ secrets.APP_PASSWORD }}"
       - name: Run Docker container
         run: make docker-run
         env: 

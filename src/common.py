@@ -1,10 +1,12 @@
 from datetime import datetime
+import re
 from PyPDF2 import PdfMerger
 import email
 import imaplib
 import os
 import pathlib
 from typing import Any, Final
+import pdfplumber
 
 PATH: Final = "src/email/invoice/"
 
@@ -28,7 +30,7 @@ class InvoiceSummary:
             email_message = email.message_from_bytes(msg_data[0][1])
             if self.__check_download_eligibility(email_message):
                 self.__extractAttachment(email_message)
-        self.__merge_pdfs()
+        return self.__merge_pdfs()
 
     def __extractAttachment(self, email_message: Any):
         for part in email_message.walk():
@@ -47,9 +49,12 @@ class InvoiceSummary:
         for filename in os.listdir("src/email/invoice/"):
             if filename.endswith(".pdf"):
                 with pdfplumber.open(f"src/email/invoice/{filename}") as pdf:
-                    page = pdf.pages[0]
-                    amount = float(page.extract_text().split("Total:")[1].split()[0])
-                    total += amount
+                    text = "\n".join(page.extract_text() or "" for page in pdf.pages) 
+                    pattern = r"Total Rs\. \d+\.?\d*" 
+                    matches = re.findall(pattern, text)
+                    if matches:
+                        amount = float(matches[0].split()[-1])
+                        total += amount
         print(f"\nFinal amount: {total}")
         merger = PdfMerger()
         for filename in os.listdir(PATH):
